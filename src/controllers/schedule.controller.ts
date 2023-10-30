@@ -1,0 +1,111 @@
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const createSchedule = async (req: Request, res: Response) => {
+  try {
+    const { customerId, userId, events, services } = req.body;
+    const newSchedule = await prisma.schedule.create({
+      data: {
+        customerId,
+        userId,
+        events: {
+          create: events,
+        },
+        services: {
+          create: services,
+        },
+      },
+      include: {
+        events: true,
+        services: true,
+      },
+    });
+    res.status(200).json(newSchedule);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const getSchedules = async (req: Request, res: Response) => {
+  try {
+    const allSchedules = await prisma.schedule.findMany({
+      include: {
+        events: true,
+        services: true,
+      },
+    });
+    res.status(200).json(allSchedules);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const getScheduleById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const schedule = await prisma.schedule.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        events: true,
+        services: true,
+      },
+    });
+    res.status(200).json(schedule);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const updateSchedule = async (req: Request, res: Response) => {
+  try {
+    const { id, customerId, userId, events, services } = req.body;
+    const updatedSchedule = await prisma.schedule.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        customerId,
+        userId,
+        events: {
+          upsert: events,
+        },
+        services: {
+          upsert: services,
+        },
+      },
+      include: {
+        events: true,
+        services: true,
+      },
+    });
+    res.status(200).json(updatedSchedule);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const deleteSchedule = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedSchedule = await prisma.schedule.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.status(200).json(deletedSchedule);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+export default {
+  createSchedule,
+  getSchedules,
+  getScheduleById,
+  updateSchedule,
+  deleteSchedule,
+};
