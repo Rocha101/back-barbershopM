@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { prisma } from "../server";
+import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
+const prisma = new PrismaClient();
+
 const registerUser = async (req: Request, res: Response) => {
+  console.log(req.body);
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password, phone, start_time, end_time } = req.body;
+
+    console.log(email);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -17,14 +22,24 @@ const registerUser = async (req: Request, res: Response) => {
       return;
     }
 
-    const newBloguser = await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
-        name,
+        username,
         email,
         password,
+        phone,
+        start_time,
+        end_time,
       },
     });
-    res.status(200).json(newBloguser);
+
+    console.log(newUser);
+
+    const token = jwt.sign({ user: newUser }, "96172890", {
+      expiresIn: 4500, // expires in 45 minutes
+    });
+
+    res.status(200).json({ token, user: newUser });
   } catch (e) {
     res.status(500).json({ error: e });
   }
@@ -57,13 +72,14 @@ const loginUser = async (req: Request, res: Response) => {
 
 const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
+  console.log(token);
   if (!token) {
     res.status(400).json({ error: "Token não encontrado" });
     return;
   }
   try {
-    const decoded = jwt.verify(token, "96172890");
-    res.status(200).json(decoded);
+    const decoded = jwt.verify(token, "96172890") as any;
+    res.locals.user = decoded.user;
     next();
   } catch (e) {
     res.status(400).json({ error: "Token inválido" });

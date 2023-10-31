@@ -13,8 +13,8 @@ model User {
   username   String?
   password   String
   phone      String?
-  start_time DateTime?
-  end_time   DateTime?
+  start_time String?
+  end_time   String?
   events     Event[]
   services   Service[]
   products   Product[]
