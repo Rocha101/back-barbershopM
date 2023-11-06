@@ -5,6 +5,7 @@ import authRoute from "./routes/auth.route";
 import scheduleRoute from "./routes/schedule.route";
 import productRoute from "./routes/product.route";
 import serviceRoute from "./routes/service.route";
+import saleRoute from "./routes/sale.route";
 
 export const prisma = new PrismaClient();
 
@@ -22,6 +23,7 @@ async function main() {
   app.use("/api/schedule", scheduleRoute);
   app.use("/api/product", productRoute);
   app.use("/api/service", serviceRoute);
+  app.use("/api/sale", saleRoute);
 
   // Catch unregistered routes
   app.all("*", (req: Request, res: Response) => {

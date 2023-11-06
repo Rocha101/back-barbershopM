@@ -19,6 +19,7 @@ model User {
   services   Service[]
   products   Product[]
   schedules  Schedule[]
+  Sale       Sale[]
 }
 
 model Customer {
@@ -64,6 +65,28 @@ model Product {
   status      String
   user        User   @relation(fields: [userId], references: [id])
   userId      Int
+  Sale        Sale?  @relation(fields: [saleId], references: [id])
+  saleId      Int?
+}
+
+model BuyerInfo {
+  id       Int     @id @default(autoincrement())
+  name     String
+  phone    String?
+  document String?
+  sales    Sale[]
+}
+
+model Sale {
+  id             Int       @id @default(autoincrement())
+  customerInfo   BuyerInfo @relation(fields: [customerInfoId], references: [id])
+  customerInfoId Int       @unique
+  products       Product[]
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id])
+  total_price    Float
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
 }
 
 model Schedule {

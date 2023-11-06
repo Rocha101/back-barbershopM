@@ -51,7 +51,29 @@ CREATE TABLE "Product" (
     "quantity" INTEGER NOT NULL,
     "status" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    CONSTRAINT "Product_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "saleId" INTEGER,
+    CONSTRAINT "Product_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Product_saleId_fkey" FOREIGN KEY ("saleId") REFERENCES "Sale" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "BuyerInfo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "phone" TEXT,
+    "document" TEXT
+);
+
+-- CreateTable
+CREATE TABLE "Sale" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "customerInfoId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "total_price" REAL NOT NULL,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" DATETIME NOT NULL,
+    CONSTRAINT "Sale_customerInfoId_fkey" FOREIGN KEY ("customerInfoId") REFERENCES "BuyerInfo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Sale_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -79,6 +101,9 @@ CREATE UNIQUE INDEX "Customer_email_key" ON "Customer"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_scheduleId_key" ON "Event"("scheduleId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Sale_customerInfoId_key" ON "Sale"("customerInfoId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ScheduleToService_AB_unique" ON "_ScheduleToService"("A", "B");
