@@ -54,25 +54,44 @@ const getBuyerInfoById = async (req: Request, res: Response) => {
 
 const createSale = async (req: Request, res: Response) => {
   try {
-    const { customerInfoId, products, userId, total_price } = req.body;
-    const newSale = await prisma.sale.create({
-      data: {
-        customerInfoId,
-        products: {
-          create: products,
+    const { customerInfo, products, userId } = req.body;
+
+    if (!customerInfo || !products || !userId) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
+    let total_price = 0;
+    for (const product of products) {
+      if (!product.price || typeof product.price !== "number") {
+        return res.status(400).json({ error: "Invalid product price" });
+      }
+      total_price += product.price;
+    }
+
+    const newSale = await prisma.$transaction(async (tx) => {
+      const newBuyerInfo = await tx.buyerInfo.create({
+        data: {
+          name: customerInfo.name,
+          phone: customerInfo.phone,
+          document: customerInfo.document,
         },
-        userId,
-        total_price,
-      },
-      include: {
-        customerInfo: true,
-        products: true,
-        user: true,
-      },
+      });
+
+      const createdSale = await tx.sale.create({
+        data: {
+          customerInfoId: newBuyerInfo.id,
+          userId,
+          total_price,
+        },
+      });
+
+      return createdSale;
     });
+
     res.status(200).json(newSale);
   } catch (e) {
-    res.status(500).json({ error: e });
+    console.error("Error creating sale:", e);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

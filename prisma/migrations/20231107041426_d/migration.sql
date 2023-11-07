@@ -40,6 +40,7 @@ CREATE TABLE "Service" (
     "description" TEXT NOT NULL,
     "price" REAL NOT NULL,
     "userId" INTEGER NOT NULL,
+    "total_time" TEXT NOT NULL,
     CONSTRAINT "Service_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

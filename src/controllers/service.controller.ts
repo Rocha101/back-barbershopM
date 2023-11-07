@@ -5,12 +5,13 @@ const prisma = new PrismaClient();
 
 const createService = async (req: Request, res: Response) => {
   try {
-    const { description, price, userId } = req.body;
+    const { description, price, userId, total_time } = req.body;
     const newService = await prisma.service.create({
       data: {
         description,
         price,
         userId,
+        total_time,
       },
     });
     res.status(200).json(newService);

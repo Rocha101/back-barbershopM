@@ -55,6 +55,7 @@ model Service {
   userId      Int
   events      Event[]
   schedules   Schedule[]
+  total_time  String
 }
 
 model Product {
