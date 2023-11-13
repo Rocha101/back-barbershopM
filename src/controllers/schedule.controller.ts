@@ -3,18 +3,61 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// {
+//   id: 0,
+//   email: 'eduardoprudenciorocha@gmail.com',
+//   username: 'eduardo',
+//   phone: '(48) 99828-0420',
+//   barberId: '1',
+//   locationId: '1',
+//   serviceId: '1',
+//   date: '2023-11-13T21:14:10.042Z',
+//   time: '10:30'
+// }
+
 const createSchedule = async (req: Request, res: Response) => {
   try {
-    const { customerId, userId, events, services } = req.body;
+    const {
+      userId,
+      serviceId,
+      username,
+      phone,
+      email,
+      locationId,
+      date,
+      start_time,
+      end_time,
+    } = req.body;
     const newSchedule = await prisma.schedule.create({
       data: {
-        customerId,
-        userId,
-        events: {
-          create: events,
+        user: {
+          connect: { id: Number(userId) },
         },
-        services: {
-          create: services,
+        customer: {
+          create: {
+            username,
+            phone,
+            email,
+          },
+        },
+        events: {
+          create: {
+            title: serviceId,
+            user: {
+              connect: { id: Number(userId) },
+            },
+            customer: {
+              connect: { email },
+            },
+            service: {
+              connect: { id: Number(serviceId) },
+            },
+            start_time: start_time,
+            end_time: end_time,
+          },
+        },
+        location: {
+          connect: { id: Number(locationId) },
         },
       },
       include: {

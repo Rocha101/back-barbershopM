@@ -19,7 +19,8 @@ model User {
   services   Service[]
   products   Product[]
   schedules  Schedule[]
-  Sale       Sale[]
+  sale       Sale[]
+  locations  Location[]
 }
 
 model Customer {
@@ -66,7 +67,7 @@ model Product {
   status      String
   user        User   @relation(fields: [userId], references: [id])
   userId      Int
-  Sale        Sale?  @relation(fields: [saleId], references: [id])
+  sale        Sale?  @relation(fields: [saleId], references: [id])
   saleId      Int?
 }
 
@@ -98,4 +99,16 @@ model Schedule {
   userId     Int
   events     Event[]
   services   Service[]
+  location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int?
+}
+
+model Location {
+  id          Int        @id @default(autoincrement())
+  description String
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int
+  schedules   Schedule[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
 }

@@ -54,6 +54,23 @@ const getServiceById = async (req: Request, res: Response) => {
   }
 };
 
+const getServiceByBarberId = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const services = await prisma.service.findMany({
+      where: {
+        userId: Number(id),
+      },
+      include: {
+        user: true,
+      },
+    });
+    res.status(200).json(services);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
 const updateService = async (req: Request, res: Response) => {
   try {
     const { id, description, price } = req.body;
@@ -102,4 +119,5 @@ export default {
   getServiceById,
   updateService,
   deleteService,
+  getServiceByBarberId,
 };
