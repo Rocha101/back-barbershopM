@@ -1,6 +1,15 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
+interface Product {
+  id: number;
+  description: string;
+  price: number;
+  quantity: number;
+  status: string;
+  userId: string;
+}
+
 const prisma = new PrismaClient();
 
 const createBuyerInfo = async (req: Request, res: Response) => {
@@ -68,6 +77,13 @@ const createSale = async (req: Request, res: Response) => {
       total_price += product.price;
     }
 
+    const totalPriceSum = (products: Product[]) => {
+      return products.reduce(
+        (sum, product) => sum + product.price * product.quantity,
+        0
+      );
+    };
+
     const newSale = await prisma.$transaction(async (tx) => {
       const newBuyerInfo = await tx.buyerInfo.create({
         data: {
@@ -81,7 +97,19 @@ const createSale = async (req: Request, res: Response) => {
         data: {
           customerInfoId: newBuyerInfo.id,
           userId,
-          total_price,
+          total_price: totalPriceSum(products),
+          products: {
+            connectOrCreate: products.map((product: any) => ({
+              where: { id: product.id },
+              create: {
+                description: product.description,
+                price: product.price,
+                quantity: product.quantity,
+                status: product.status,
+                userId: product.userId,
+              },
+            })),
+          },
         },
       });
 
