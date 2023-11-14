@@ -25,16 +25,33 @@ const createSchedule = async (req: Request, res: Response) => {
       end_time,
     } = req.body;
 
+    // Check if the customer with the provided email already exists
+    let existingCustomer = await prisma.customer.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    // If the customer doesn't exist, create a new one
+    if (!existingCustomer) {
+      existingCustomer = await prisma.customer.create({
+        data: {
+          username,
+          phone,
+          email,
+        },
+      });
+    }
+
+    // Now you can use the existingCustomer in your schedule creation
     const newSchedule = await prisma.schedule.create({
       data: {
         user: {
           connect: { id: Number(userId) },
         },
         customer: {
-          create: {
-            username,
-            phone,
-            email,
+          connect: {
+            email: existingCustomer.email,
           },
         },
         events: {
