@@ -39,14 +39,14 @@ model Event {
   description String?
   start_time  DateTime
   end_time    DateTime
-  user        User      @relation(fields: [userId], references: [id])
   userId      Int
-  customer    Customer? @relation(fields: [customerId], references: [id])
   customerId  Int?
-  service     Service   @relation(fields: [serviceId], references: [id])
   serviceId   Int
-  schedule    Schedule  @relation(fields: [scheduleId], references: [id])
   scheduleId  Int       @unique
+  user        User      @relation(fields: [userId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  service     Service   @relation(fields: [serviceId], references: [id])
+  schedule    Schedule  @relation(fields: [scheduleId], references: [id])
 
   @@index([userId])
   @@index([customerId])
@@ -57,11 +57,11 @@ model Service {
   id          Int        @id @default(autoincrement())
   description String
   price       Float
-  user        User       @relation(fields: [userId], references: [id])
   userId      Int
+  total_time  String
+  user        User       @relation(fields: [userId], references: [id])
   events      Event[]
   schedules   Schedule[]
-  total_time  String
 
   @@index([userId])
 }
@@ -72,10 +72,10 @@ model Product {
   price       Float
   quantity    Int
   status      String
-  user        User   @relation(fields: [userId], references: [id])
   userId      Int
-  sale        Sale?  @relation(fields: [saleId], references: [id])
   saleId      Int?
+  user        User   @relation(fields: [userId], references: [id])
+  sale        Sale?  @relation(fields: [saleId], references: [id])
 
   @@index([userId])
   @@index([saleId])
@@ -91,29 +91,29 @@ model BuyerInfo {
 
 model Sale {
   id             Int       @id @default(autoincrement())
-  customerInfo   BuyerInfo @relation(fields: [customerInfoId], references: [id])
   customerInfoId Int       @unique
-  products       Product[]
   userId         Int
-  user           User      @relation(fields: [userId], references: [id])
   total_price    Float
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
+  customerInfo   BuyerInfo @relation(fields: [customerInfoId], references: [id])
+  products       Product[]
+  user           User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Schedule {
   id         Int       @id @default(autoincrement())
-  customer   Customer? @relation(fields: [customerId], references: [id])
   customerId Int?
-  user       User      @relation(fields: [userId], references: [id])
   userId     Int
-  events     Event?
   eventId    Int?
+  locationId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
+  events     Event?
   services   Service[]
   location   Location? @relation(fields: [locationId], references: [id])
-  locationId Int?
 
   @@index([customerId])
   @@index([locationId])
@@ -123,11 +123,20 @@ model Schedule {
 model Location {
   id          Int        @id @default(autoincrement())
   description String
-  user        User       @relation(fields: [userId], references: [id])
   userId      Int
-  schedules   Schedule[]
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id])
+  schedules   Schedule[]
 
   @@index([userId])
+}
+
+model ScheduleToService {
+  A Int
+  B Int
+
+  @@unique([A, B], map: "_ScheduleToService_AB_unique")
+  @@index([B], map: "_ScheduleToService_B_index")
+  @@map("_ScheduleToService")
 }
