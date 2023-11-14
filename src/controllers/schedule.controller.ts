@@ -3,17 +3,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// {
-//   id: 0,
-//   email: 'eduardoprudenciorocha@gmail.com',
-//   username: 'eduardo',
-//   phone: '(48) 99828-0420',
-//   barberId: '1',
-//   locationId: '1',
-//   serviceId: '1',
-//   date: '2023-11-13T21:14:10.042Z',
-//   time: '10:30'
-// }
+// email: "eduardoprudenciorocha@gmail.com";
+// end_time: "2023-11-13T23:21:00.000Z";
+// locationId: "1";
+// phone: "(48) 99828-0420";
+// serviceId: "1";
+// start_time: "2023-11-13T22:51:00.000Z";
+// userId: "1";
+// username: "eduardo";
 
 const createSchedule = async (req: Request, res: Response) => {
   try {
@@ -24,10 +21,10 @@ const createSchedule = async (req: Request, res: Response) => {
       phone,
       email,
       locationId,
-      date,
       start_time,
       end_time,
     } = req.body;
+
     const newSchedule = await prisma.schedule.create({
       data: {
         user: {
@@ -42,22 +39,26 @@ const createSchedule = async (req: Request, res: Response) => {
         },
         events: {
           create: {
-            title: serviceId,
-            user: {
-              connect: { id: Number(userId) },
-            },
-            customer: {
-              connect: { email },
-            },
+            start_time,
+            end_time,
             service: {
               connect: { id: Number(serviceId) },
             },
-            start_time: start_time,
-            end_time: end_time,
+            title: "teste",
+            customer: {
+              connect: { email },
+            },
+            user: {
+              connect: { id: Number(userId) },
+            },
           },
         },
+        eventId: 1,
         location: {
           connect: { id: Number(locationId) },
+        },
+        services: {
+          connect: { id: Number(serviceId) },
         },
       },
       include: {
@@ -65,9 +66,11 @@ const createSchedule = async (req: Request, res: Response) => {
         services: true,
       },
     });
+
     res.status(200).json(newSchedule);
   } catch (e) {
-    res.status(500).json({ error: e });
+    console.error("Error creating schedule:", e);
+    res.status(500).json({ error: e || "Internal Server Error" });
   }
 };
 

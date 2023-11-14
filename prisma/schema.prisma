@@ -47,6 +47,10 @@ model Event {
   serviceId   Int
   schedule    Schedule  @relation(fields: [scheduleId], references: [id])
   scheduleId  Int       @unique
+
+  @@index([userId])
+  @@index([customerId])
+  @@index([serviceId])
 }
 
 model Service {
@@ -58,6 +62,8 @@ model Service {
   events      Event[]
   schedules   Schedule[]
   total_time  String
+
+  @@index([userId])
 }
 
 model Product {
@@ -70,6 +76,9 @@ model Product {
   userId      Int
   sale        Sale?  @relation(fields: [saleId], references: [id])
   saleId      Int?
+
+  @@index([userId])
+  @@index([saleId])
 }
 
 model BuyerInfo {
@@ -90,6 +99,8 @@ model Sale {
   total_price    Float
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 model Schedule {
@@ -98,10 +109,15 @@ model Schedule {
   customerId Int?
   user       User      @relation(fields: [userId], references: [id])
   userId     Int
-  events     Event[]
+  events     Event?
+  eventId    Int?
   services   Service[]
   location   Location? @relation(fields: [locationId], references: [id])
   locationId Int?
+
+  @@index([customerId])
+  @@index([locationId])
+  @@index([userId])
 }
 
 model Location {
@@ -112,4 +128,6 @@ model Location {
   schedules   Schedule[]
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
+
+  @@index([userId])
 }

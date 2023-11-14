@@ -4,21 +4,21 @@ import ScheduleController from "../controllers/schedule.controller";
 
 const router = express.Router();
 
-router.get("/", AuthController.verifyToken, ScheduleController.getSchedules);
+router.get("/", ScheduleController.getSchedules);
 router.get(
   "/:id",
-  AuthController.verifyToken,
+
   ScheduleController.getScheduleById
 );
-router.post("/", AuthController.verifyToken, ScheduleController.createSchedule);
+router.post("/", ScheduleController.createSchedule);
 router.delete(
   "/:id",
-  AuthController.verifyToken,
+
   ScheduleController.deleteSchedule
 );
 router.put(
   "/:id",
-  AuthController.verifyToken,
+
   ScheduleController.updateSchedule
 );
 
