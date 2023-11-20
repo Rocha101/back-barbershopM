@@ -98,6 +98,7 @@ const getSchedules = async (req: Request, res: Response) => {
       include: {
         events: true,
         services: true,
+        location: true,
       },
     });
     res.status(200).json(allSchedules);
@@ -116,6 +117,7 @@ const getScheduleById = async (req: Request, res: Response) => {
       include: {
         events: true,
         services: true,
+        location: true,
       },
     });
     res.status(200).json(schedule);
