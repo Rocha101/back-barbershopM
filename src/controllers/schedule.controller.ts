@@ -61,7 +61,7 @@ const createSchedule = async (req: Request, res: Response) => {
             service: {
               connect: { id: Number(serviceId) },
             },
-            title: "teste",
+            title: username,
             customer: {
               connect: { email },
             },
@@ -81,6 +81,7 @@ const createSchedule = async (req: Request, res: Response) => {
       include: {
         events: true,
         services: true,
+        location: true,
       },
     });
 
