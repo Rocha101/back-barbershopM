@@ -5,6 +5,7 @@ import AuthController from "../controllers/auth.controller";
 const router = express.Router();
 
 router.get("/", AuthController.verifyToken, UserController.getUsers);
+router.get("/list", UserController.getUsers);
 router.get("/:id", AuthController.verifyToken, UserController.getUserById);
 router.post("/", AuthController.verifyToken, UserController.createUser);
 router.delete("/:id", AuthController.verifyToken, UserController.deleteUser);

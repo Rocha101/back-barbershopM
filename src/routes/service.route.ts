@@ -15,6 +15,7 @@ router.get(
   AuthController.verifyToken,
   ServiceController.getServiceByBarberId
 );
+router.get("/list/barber/:id", ServiceController.getServiceByBarberId);
 router.post("/", AuthController.verifyToken, ServiceController.createService);
 router.delete(
   "/:id",

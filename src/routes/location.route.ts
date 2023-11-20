@@ -15,6 +15,7 @@ router.get(
   AuthController.verifyToken,
   LocationController.getLocationByBarberId
 );
+router.get("/list/barber/:id", LocationController.getLocationByBarberId);
 router.post("/", AuthController.verifyToken, LocationController.createLocation);
 router.delete(
   "/:id",
