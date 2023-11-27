@@ -92,12 +92,6 @@ const deleteUser = async (req: Request, res: Response) => {
       where: {
         id: Number(id),
       },
-      include: {
-        events: true,
-        services: true,
-        products: true,
-        schedules: true,
-      },
     });
     res.status(200).json(deletedUser);
   } catch (e) {
