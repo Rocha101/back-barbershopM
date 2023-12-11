@@ -8,7 +8,7 @@ router.get("/", ScheduleController.getSchedules);
 router.get(
   "/:id",
 
-  ScheduleController.getScheduleById
+  ScheduleController.getSchedulesByUserId
 );
 router.post("/", ScheduleController.createSchedule);
 router.delete(

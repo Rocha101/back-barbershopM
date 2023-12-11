@@ -8,8 +8,9 @@ router.get("/", AuthController.verifyToken, ProductController.getProducts);
 router.get(
   "/:id",
   AuthController.verifyToken,
-  ProductController.getProductById
+  ProductController.getProductsByUserId
 );
+
 router.post("/", AuthController.verifyToken, ProductController.createProduct);
 router.delete(
   "/:id",

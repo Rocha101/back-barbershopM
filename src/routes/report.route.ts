@@ -5,7 +5,7 @@ import express from "express";
 const router = express.Router();
 
 router.get(
-  "/",
+  "/:id",
   authController.verifyToken,
   reportController.generateSalesReport
 );

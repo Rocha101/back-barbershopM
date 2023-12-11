@@ -20,14 +20,14 @@ async function main() {
   app.use(express.json());
 
   // Register API routes
-  app.use("/api/user", userRoute);
+  app.use("/api/users", userRoute);
   app.use("/api/auth", authRoute);
-  app.use("/api/schedule", scheduleRoute);
-  app.use("/api/product", productRoute);
-  app.use("/api/service", serviceRoute);
-  app.use("/api/sale", saleRoute);
+  app.use("/api/schedules", scheduleRoute);
+  app.use("/api/products", productRoute);
+  app.use("/api/services", serviceRoute);
+  app.use("/api/sales", saleRoute);
   app.use("/api/report", reportRoute);
-  app.use("/api/location", locationRoute);
+  app.use("/api/locations", locationRoute);
 
   // Catch unregistered routes
   app.all("*", (req: Request, res: Response) => {

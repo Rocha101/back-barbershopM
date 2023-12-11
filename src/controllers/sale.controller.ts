@@ -142,6 +142,25 @@ const getSaleById = async (req: Request, res: Response) => {
   }
 };
 
+const getSalesByUserId = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const sale = await prisma.sale.findMany({
+      where: {
+        userId: Number(id),
+      },
+      include: {
+        customerInfo: true,
+        products: true,
+        user: true,
+      },
+    });
+    res.status(200).json(sale);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
 const getSales = async (req: Request, res: Response) => {
   try {
     const allSales = await prisma.sale.findMany({
@@ -212,4 +231,5 @@ export default {
   updateSale,
   deleteSale,
   getSales,
+  getSalesByUserId,
 };

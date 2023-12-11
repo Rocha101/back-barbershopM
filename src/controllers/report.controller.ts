@@ -4,15 +4,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const generateSalesReport = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
-      return res
-        .status(400)
-        .json({
-          error: "Start date and end date are required query parameters.",
-        });
+      return res.status(400).json({
+        error: "Start date and end date are required query parameters.",
+      });
     }
 
     // Parse start and end dates into Date objects
@@ -26,6 +25,7 @@ const generateSalesReport = async (req: Request, res: Response) => {
           gte: startDateObj, // "gte" means greater than or equal to
           lte: endDateObj, // "lte" means less than or equal to
         },
+        userId: Number(id),
       },
       include: {
         customerInfo: true,

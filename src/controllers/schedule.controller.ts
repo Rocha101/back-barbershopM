@@ -107,6 +107,25 @@ const getSchedules = async (req: Request, res: Response) => {
   }
 };
 
+const getSchedulesByUserId = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const schedule = await prisma.schedule.findMany({
+      where: {
+        userId: Number(id),
+      },
+      include: {
+        events: true,
+        services: true,
+        location: true,
+      },
+    });
+    res.status(200).json(schedule);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
 const getScheduleById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -174,4 +193,5 @@ export default {
   getScheduleById,
   updateSchedule,
   deleteSchedule,
+  getSchedulesByUserId,
 };

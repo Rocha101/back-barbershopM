@@ -34,6 +34,23 @@ const getProducts = async (req: Request, res: Response) => {
   }
 };
 
+const getProductsByUserId = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const allProducts = await prisma.product.findMany({
+      include: {
+        user: true,
+      },
+      where: {
+        userId: Number(id),
+      },
+    });
+    res.status(200).json(allProducts);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
 const getProductById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -97,4 +114,5 @@ export default {
   getProductById,
   updateProduct,
   deleteProduct,
+  getProductsByUserId,
 };
